@@ -1,0 +1,26 @@
+FROM python:3.7-slim
+MAINTAINER github.pdx
+
+ENV LANG C.UTF-8
+ENV LC_ALL C.UTF-8
+ENV PYTHONUNBUFFERED 1
+ENV PYTHONFAULTHANDLER 1
+
+COPY requirements.txt .
+
+RUN apt-get update && \
+  apt-get install -y --no-install-recommends build-essential && \
+  pip install -r /requirements.txt && \
+  apt-get purge -y build-essential && \
+  apt-get autoremove -y && \
+  apt-get autoclean -y && \
+  rm -rf /var/lib/{apt, dpkg, cache,log} /tmp/* ~/.cache && \
+  rm -rf /usr/src/python /usr/share/doc /usr/share/man && \
+  rm -f /var/cache/apt/archives/*.deb
+
+COPY ./data ./data
+COPY ./media_etl ./media_etl
+
+WORKDIR /media_etl
+RUN useradd user
+USER user

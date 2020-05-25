@@ -1,0 +1,35 @@
+version: "3"
+
+services:
+  media_etl:
+    user: 1000:1000
+    build: .
+    environment:
+      - DB_HOST=postgres
+      - DB_NAME=media_db
+      - DB_USER=run_admin_run
+      - DB_PASS=run_pass_run
+      - DB_PORT=5432
+    depends_on:
+      - postgres
+    networks:
+      - frontend
+      - backend
+      
+  postgres:
+    image: postgres:12.2
+    # <host port>:<container port>
+    ports:
+      - "5432:5432"
+    environment:
+     - POSTGRES_USER=run_admin_run
+     - POSTGRES_PASSWORD=run_pass_run
+     - POSTGRES_DB=media_db
+    networks:
+      - backend
+      
+networks:
+  frontend:
+    driver: bridge
+  backend:
+    driver: bridge
