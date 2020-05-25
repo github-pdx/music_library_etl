@@ -1,6 +1,6 @@
 # *Music Library* ETL
 
-[![Build Status](https://travis-ci.com/github-pdx/media_etl.svg?branch=master)](https://travis-ci.com/github-pdx/media_etl)
+[![Build Status](https://travis-ci.com/github-pdx/music_library_etl.svg?branch=master)](https://travis-ci.com/github-pdx/music_library_etl)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 ## Python v3.7 script to ETL media tags:
