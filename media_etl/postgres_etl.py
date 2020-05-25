@@ -3,9 +3,10 @@
 import os
 import pathlib
 import time
-import postgres_api
-from db import cmd_args
+
+from db import *
 from db import postgres_select_queries as sql
+
 
 BASE_DIR, SCRIPT_NAME = os.path.split(os.path.abspath(__file__))
 PARENT_PATH, CURR_DIR = os.path.split(BASE_DIR)

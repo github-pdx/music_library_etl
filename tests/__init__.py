@@ -1,3 +1,3 @@
 import sys
 sys.path.append("..")
-__all__ = ['postgres_etl']
+__all__ = ['test_postgres_api']

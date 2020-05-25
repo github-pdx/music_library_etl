@@ -8,9 +8,8 @@ import traceback
 import psycopg2
 import pandas
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
-from db import spotify_client
-from db import postgres_insert_queries as sql
-
+import media_etl.db.spotify as spotify
+import media_etl.db.postgres_insert_queries as sql
 
 BASE_DIR, SCRIPT_NAME = os.path.split(os.path.abspath(__file__))
 PARENT_PATH, CURR_DIR = os.path.split(BASE_DIR)
@@ -42,13 +41,14 @@ class PostgresMedia:
                                            connect_timeout=1)
             cls.db_conn.set_session(autocommit=True)
             cls.db_conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
+            cls.conn_status = cls.is_connected()
             cls.db_cur = cls.db_conn.cursor()
             if PRIVATE_CONFIG:
-                config_path = pathlib.Path(PARENT_PATH, 'private_cfg',
+                config_path = pathlib.Path(TWO_PARENT_PATH, 'private_cfg',
                                            'spotify.cfg')
             else:
-                config_path = pathlib.Path(PARENT_PATH, 'spotify.cfg')
-            cls.spotify = spotify_client.SpotifyClient(config_path)
+                config_path = pathlib.Path(TWO_PARENT_PATH, 'spotify.cfg')
+            cls.spotify = spotify.SpotifyClient(config_path)
         except (OSError, psycopg2.OperationalError):
             cls.db_conn = None
             cls.__show_exception()
@@ -67,6 +67,11 @@ class PostgresMedia:
         except psycopg2.OperationalError as exc:
             print("ERROR: not connected", exc)
         return False
+
+    @classmethod
+    def get_connection(cls):
+        """Return client connection to 'media_db' database."""
+        return cls.db_conn
 
     @staticmethod
     def __show_exception():
@@ -89,7 +94,7 @@ class PostgresMedia:
             print(f"   tables: {cls.db_cur.fetchall()}")
 
     @classmethod
-    def query(cls, query: str, params: list):
+    def query(cls, query: str, params: list = []):
         """Query media database for result set based on params."""
         try:
             pq_query = f"{query} VALUES {params};"
@@ -174,7 +179,8 @@ class PostgresMedia:
             for column, series in df.iterrows():
                 if cls.spotify.run_spotify():
                     artist_name = series['artist']
-                    series['artist_id'] = cls.spotify.get_artist_id(artist_name)
+                    series['artist_id'] = cls.spotify.get_artist_id(
+                        artist_name)
                 for table, headers in sql.HEADERS.items():
                     data = series[headers]
                     cls.db_cur.execute(sql.INSERTS[table], data)
