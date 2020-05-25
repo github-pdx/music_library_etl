@@ -2,7 +2,8 @@ import unittest
 import os
 import pathlib
 import random
-from media_etl.db import postgres_api
+from media_etl.db.postgres_api import PostgresMedia
+
 BASE_DIR, SCRIPT_NAME = os.path.split(os.path.abspath(__file__))
 PARENT_PATH, CURR_DIR = os.path.split(BASE_DIR)
 
@@ -11,10 +12,10 @@ class TestDatabase(unittest.TestCase):
     """Test case class for postgres_api.py"""
 
     def setUp(self):
-        self.pgdb_api = postgres_api.PostgresMedia(hostname='localhost',
-                                                   port_num=5432,
-                                                   username='run_admin_run',
-                                                   password='run_pass_run')
+        self.pgdb_api = PostgresMedia(hostname='localhost',
+                                      port_num=5432,
+                                      username='run_admin_run',
+                                      password='run_pass_run')
 
     def test_is_connected(self):
         if self.pgdb_api.conn_status:

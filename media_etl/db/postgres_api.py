@@ -8,8 +8,8 @@ import traceback
 import psycopg2
 import pandas
 from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
-import media_etl.db.spotify as spotify
-import media_etl.db.postgres_insert_queries as sql
+from db.spotify import SpotifyClient
+from db import postgres_insert_queries as sql
 
 BASE_DIR, SCRIPT_NAME = os.path.split(os.path.abspath(__file__))
 PARENT_PATH, CURR_DIR = os.path.split(BASE_DIR)
@@ -48,7 +48,7 @@ class PostgresMedia:
                                            'spotify.cfg')
             else:
                 config_path = pathlib.Path(TWO_PARENT_PATH, 'spotify.cfg')
-            cls.spotify = spotify.SpotifyClient(config_path)
+            cls.spotify = SpotifyClient(config_path)
         except (OSError, psycopg2.OperationalError):
             cls.db_conn = None
             cls.__show_exception()

@@ -8,6 +8,7 @@ install:
 env:
   - SH=bash
   - export PYTHONPATH=$PYTHONPATH:$(pwd)
+  - export PYTHONPATH=$PYTHONPATH:$(pwd/media_etl)
 before_script:
   - psql -c "CREATE DATABASE media_db;" -U postgres
   - psql -c "CREATE USER run_admin_run WITH PASSWORD 'run_pass_run';" -U postgres

@@ -3,8 +3,8 @@
 import os
 import pathlib
 import time
-
-from db import *
+from db import cmd_args
+from db import postgres_api
 from db import postgres_select_queries as sql
 
 
