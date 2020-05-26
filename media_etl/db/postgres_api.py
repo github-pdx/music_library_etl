@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-"""Media driver module to insert JSON dumps into PostgreSQL."""
+"""Media driver module to insert JSON media tags into PostgreSQL."""
 import os
 import sys
 import pathlib

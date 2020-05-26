@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-"""Media driver module to insert JSON dumps into PostgreSQL."""
+"""Media driver module to insert JSON media tag data into PostgreSQL."""
 import os
 import pathlib
 import time
@@ -7,11 +7,9 @@ from db import cmd_args
 from db import postgres_api
 from db import postgres_select_queries as sql
 
-
 BASE_DIR, SCRIPT_NAME = os.path.split(os.path.abspath(__file__))
 PARENT_PATH, CURR_DIR = os.path.split(BASE_DIR)
 TWO_PARENT_PATH = os.sep.join(pathlib.Path(BASE_DIR).parts[:-2])
-
 DEMO_ENABLED = True
 
 
