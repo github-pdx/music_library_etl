@@ -14,7 +14,6 @@ from db import postgres_insert_queries as sql
 BASE_DIR, SCRIPT_NAME = os.path.split(os.path.abspath(__file__))
 PARENT_PATH, CURR_DIR = os.path.split(BASE_DIR)
 TWO_PARENT_PATH = os.sep.join(pathlib.Path(BASE_DIR).parts[:-2])
-PRIVATE_CONFIG = False
 
 
 class PostgresMedia:
@@ -25,7 +24,8 @@ class PostgresMedia:
                  port_num: int = 5432,
                  db_name: str = 'media_db',
                  username: str = 'run_admin_run',
-                 password: str = 'run_pass_run'):
+                 password: str = 'run_pass_run',
+                 private_cfg=False):
         try:
             cls.__is_connected = False
             cls.__hostname = hostname
@@ -33,6 +33,7 @@ class PostgresMedia:
             cls.__db_name = db_name
             cls.__username = username
             cls.__password = password
+            cls.__private_cfg = private_cfg
             cls.db_conn = psycopg2.connect(f"host={hostname} "
                                            f"port={port_num} "
                                            f"dbname={db_name} "
@@ -43,7 +44,7 @@ class PostgresMedia:
             cls.db_conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
             cls.conn_status = cls.is_connected()
             cls.db_cur = cls.db_conn.cursor()
-            if PRIVATE_CONFIG:
+            if cls.__private_cfg:
                 config_path = pathlib.Path(TWO_PARENT_PATH, 'private_cfg',
                                            'spotify.cfg')
             else:
@@ -120,7 +121,7 @@ class PostgresMedia:
                                    f"LOGIN PASSWORD '{password}' "
                                    f"SUPERUSER CREATEDB CREATEROLE NOINHERIT "
                                    f"LOGIN CONNECTION LIMIT -1 "
-                                   f"VALID UNTIL '2020-12-31';")
+                                   f"VALID UNTIL '2022-12-31';")
             status = f"SUCCESS! {def_name}: {username}"
         except (OSError, psycopg2.OperationalError,
                 psycopg2.errors.InFailedSqlTransaction) as exc:
@@ -177,10 +178,11 @@ class PostgresMedia:
                                   encoding='utf-8',
                                   orient='split')
             for column, series in df.iterrows():
-                if cls.spotify.run_spotify():
-                    artist_name = series['artist']
-                    series['artist_id'] = cls.spotify.get_artist_id(
-                        artist_name)
+                artist_name = str(series['artist_name'])
+                series['artist_id'] = cls.spotify.get_artist_id(artist_name)
+                album_title = str(series['album_title'])
+                series['album_id'] = cls.spotify.get_album_id(
+                    series['artist_id'], album_title)
                 for table, headers in sql.HEADERS.items():
                     data = series[headers]
                     cls.db_cur.execute(sql.INSERTS[table], data)
@@ -189,7 +191,7 @@ class PostgresMedia:
 
     @classmethod
     def process_data(cls, input_path: pathlib.Path):
-        """Finds source JSON files recursively from input path."""
+        """Locates source JSON files recursively from input path."""
         file_path_list = [p.absolute() for p in
                           sorted(input_path.rglob("*.json"))
                           if p.is_file()]

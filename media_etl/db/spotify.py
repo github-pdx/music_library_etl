@@ -11,6 +11,33 @@ from spotipy.oauth2 import SpotifyClientCredentials
 
 BASE_DIR, SCRIPT_NAME = os.path.split(os.path.abspath(__file__))
 TWO_PARENT_PATH = os.sep.join(pathlib.Path(BASE_DIR).parts[:-2])
+DEGUB = False
+
+OFFLINE_ARTIST_IDS = {'Arcade Fire': '3kjuyTCjPG1WMFCiyc5IuB',
+                      'Frank Sinatra': '1Mxqyy3pSjf8kZZL4QVxS0',
+                      'Interpol': '3WaJSfKnzc65VDgmj2zU8B',
+                      'Rimsky-Korsakov': '2kXJ68O899XvWOBdpzlXgs',
+                      'M. Ward': '6nXSnNEdLuKTzAQozRtqiI',
+                      'Massive Attack': '6FXMGgJwohJLUSr5nVlf9X',
+                      'Mazzy Star': '37w38cCSGgKLdayTRjna4W',
+                      'Ravel': '17hR0sYHpx7VYTMRfFUOmY',
+                      'Beethoven': '2wOqMjp9TyABvtHdOSOTUS',
+                      'Björk': '7w29UYBi0qsHi5RTcv3lmA',
+                      'Patsy Cline': '7dNsHhGeGU5MV01r06O8gK',
+                      'Sallie Ford & The Sound Outside': '0Z8RhQLJrLxKMWoUW2qo95'}
+
+OFFLINE_ALBUM_IDS = {'The Suburbs': '3DrgM5X3yX1JP1liNLAOHI',
+                     'Sinatra Reprise': '4Rka7iTWRtRUFouxyzEKKV',
+                     'Turn On The Bright Lights': '79deKDaslwLfH3yPR2T3SB',
+                     'Capriccio Espagnol': '4aIDs5QPfX9T7SdPIXOwVL',
+                     'Hold Time': '4C8AUW89DL5LE5ikBBm4sp',
+                     '100th Window': '60szvcndZTCqG9E7GSAplB',
+                     'So Tonight That I Might See': '5K18gTgac0q6Jma5HkV1vA',
+                     'Rapsodie Espagnol': '2tVaOSl5WI3hfTLMmkxcWs',
+                     'Symphony No.8 in F-major, Op.93': '7w29UYBi0qsHi5RTcv3lmA',
+                     'Debut': '3icT9XGrBfhlV8BKK4WEGX',
+                     'Definitive Collection': '3g5uyAp8sS8LnnCxh9y2em',
+                     'Dirty Radio': '7I9KroNPmpw9qFYZ8Vp7pN'}
 
 
 class ConfigClient:
@@ -79,6 +106,8 @@ class SpotifyClient:
         except spotipy.oauth2.SpotifyOauthError:
             print(f"example: '{os.sep.join(config_path.parts[-3:])}': "
                   f"intentionally incorrect... skipping lookup")
+        print(f"is_connected: {cls.is_connected()} "
+              f"is_config_valid: {cls.is_config_valid()}")
 
     @staticmethod
     def __show_exception() -> None:
@@ -93,9 +122,14 @@ class SpotifyClient:
         return cls.__is_config_valid
 
     @classmethod
+    def is_connected(cls) -> bool:
+        """Checks to see if spotify.cfg file exists and is valid."""
+        return cls.__is_connected
+
+    @classmethod
     def run_spotify(cls) -> bool:
         """If both client is connected adn spotify.cfg is valid."""
-        return cls.__is_connected and cls.__is_config_valid
+        return cls.is_config_valid() and cls.is_connected()
 
     @classmethod
     def get_artist_id(cls, artist_name: str) -> str:
@@ -105,38 +139,45 @@ class SpotifyClient:
             try:
                 results = cls.__sp.search(q=f"artist:{artist_name}",
                                           type='artist')
-                # print(f"get_artist_id: '{artist_name}' '{results}'")
                 items = results['artists']['items']
                 if len(items) > 0:
                     artist_id = items[0]['id']
-                    print(f"   '{artist_name}' get_artist_id:'{artist_id}'")
-                    return artist_id
-            except spotipy.oauth2.SpotifyOauthError:
+            except (spotipy.oauth2.SpotifyOauthError,
+                    spotipy.exceptions.SpotifyException):
                 cls.__show_exception()
+        else:
+            artist_id = OFFLINE_ARTIST_IDS[artist_name]
+        print(f"   get_artist_id: {artist_name:32}\t{artist_id}")
         return artist_id
 
     @classmethod
     def get_album_id(cls, artist_id: str, target_album: str) -> str:
-        """Spotify API to lookup album ID."""
+        """TO DO: Spotify API to lookup album ID using rapidfuzz."""
         album_id = ''
         if cls.run_spotify():
             try:
                 results = cls.__sp.artist_albums(artist_id=artist_id,
                                                  limit=50)
                 albums = results['items']
+                ratios = []
                 for album in albums:
-                    candidate_album = album['name']
-                    fuzzy_ratio = fuzz.ratio(target_album.lower(),
-                                             candidate_album.lower())
-                    if target_album == candidate_album:
-                        album_id = album['id']
-                        return album_id
-                    else:
-                        album_id = ''
-                        print(f"fuzzy:{fuzzy_ratio}:\n"
-                              f"   target: '{target_album}'\n"
-                              f"candidate: '{candidate_album}'")
-                return album_id
-            except spotipy.oauth2.SpotifyOauthError:
+                    fuzz_ratio = round(fuzz.ratio(target_album.lower(),
+                                                  album['name'].lower()), 4)
+                    ratios.append(fuzz_ratio)
+                # check album title by string similarity matching
+                max_idx = ratios.index(max(ratios))
+                album_id = albums[max_idx]['id']
+                if DEGUB:
+                    print(
+                        f"album: {album['name']}\tid: {album['id']}\t ratio: {fuzz_ratio}")
+                    print(f"idx: {max_idx} max:{max(ratios)}\n"
+                          f"input_album:   {target_album}\n"
+                          f"closest_album: {albums[max_idx]['name']}\n"
+                          f"album_id:   {album_id}\n")
+            except (spotipy.oauth2.SpotifyOauthError,
+                    spotipy.exceptions.SpotifyException):
                 cls.__show_exception()
+        else:
+            album_id = OFFLINE_ALBUM_IDS[target_album]
+        print(f"    get_album_id: {target_album:32}\t{album_id}")
         return album_id
