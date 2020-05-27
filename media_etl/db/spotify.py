@@ -6,7 +6,7 @@ import sys
 import configparser
 import traceback
 import spotipy
-from fuzzywuzzy import fuzz
+from rapidfuzz import fuzz
 from spotipy.oauth2 import SpotifyClientCredentials
 
 BASE_DIR, SCRIPT_NAME = os.path.split(os.path.abspath(__file__))
