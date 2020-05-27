@@ -1,6 +1,6 @@
 # *Music Library* ETL
 
-[![Build Status](https://travis-ci.org/github-pdx/music_library_etl.svg?branch=master&kill_cache=1)](https://travis-ci.org/github-pdx/music_library_etl)
+[![Build Status](https://travis-ci.org/github-pdx/music_library_etl.svg?branch=master)](https://travis-ci.org/github-pdx/music_library_etl)
 
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
