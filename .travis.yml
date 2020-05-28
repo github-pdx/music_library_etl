@@ -11,6 +11,7 @@ env:
 before_script:
   - psql -c "CREATE DATABASE media_db;" -U postgres
   - psql -c "CREATE USER run_admin_run WITH PASSWORD 'run_pass_run';" -U postgres
+  - sudo psql -c "ALTER ROLE run_admin_run SUPERUSER;" -U postgres
 services:
   - postgresql
 script:

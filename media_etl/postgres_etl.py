@@ -18,7 +18,6 @@ def main():
     """Driver to generate Postgres database records from JSON source file."""
     print(f"{SCRIPT_NAME} starting...")
     start = time.perf_counter()
-
     args = cmd_args.get_cmd_args(port_num=5432)
     server = args.server
     port_num = args.port_num
@@ -43,8 +42,9 @@ def main():
             pg_api.query(query=sql.TRACK_SELECT, params=['Future Proof'])
             pg_api.query(query=sql.GENRE_SELECT, params=['Classical'])
             pg_api.query(query=sql.FILE_SELECT, params=['.flac'])
-            pg_api.query(query=sql.GAIN_SELECT, params=['-4.5'])
+            pg_api.query(query=sql.GAIN_SELECT, params=['-4.0'])
             pg_api.query(query=sql.JOIN_SELECT, params=['Rockabilly'])
+            pg_api.query(query=sql.AVG_SIZE_SELECT)
         pg_api.close()
     end = time.perf_counter() - start
     print(f"\n{SCRIPT_NAME} finished in {end:0.2f} seconds")

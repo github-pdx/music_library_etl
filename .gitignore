@@ -1,8 +1,8 @@
 # Custom
 tests/test_coverage
 tests/test_code_style
-check_style_coverage.py
 tests/output
+check_style_coverage.py
 private_cfg
 docker_cmds.txt
 setup.py

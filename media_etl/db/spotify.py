@@ -104,10 +104,10 @@ class SpotifyClient:
             else:
                 print(f"invalid: '{os.sep.join(config_path.parts[-3:])}'")
         except spotipy.oauth2.SpotifyOauthError:
-            print(f"example: '{os.sep.join(config_path.parts[-3:])}': "
-                  f"intentionally incorrect... skipping lookup")
+            print(f"\nexample: '{os.sep.join(config_path.parts[-3:])}': "
+                  f"intentionally incorrect... using offline lookup")
         print(f"is_connected: {cls.is_connected()} "
-              f"is_config_valid: {cls.is_config_valid()}")
+              f"\tis_config_valid: {cls.is_config_valid()}")
 
     @staticmethod
     def __show_exception() -> None:
@@ -152,7 +152,7 @@ class SpotifyClient:
 
     @classmethod
     def get_album_id(cls, artist_id: str, target_album: str) -> str:
-        """TO DO: Spotify API to lookup album ID using rapidfuzz."""
+        """Spotify API to lookup album ID using rapidfuzz for closest match."""
         album_id = ''
         if cls.run_spotify():
             try:
@@ -164,12 +164,12 @@ class SpotifyClient:
                     fuzz_ratio = round(fuzz.ratio(target_album.lower(),
                                                   album['name'].lower()), 4)
                     ratios.append(fuzz_ratio)
-                # check album title by string similarity matching
+                # check album title by string similarity matching (rapidfuzz)
                 max_idx = ratios.index(max(ratios))
                 album_id = albums[max_idx]['id']
                 if DEGUB:
-                    print(
-                        f"album: {album['name']}\tid: {album['id']}\t ratio: {fuzz_ratio}")
+                    print(f"album: {album['name']}\t"
+                          f"id: {album['id']}\t ratio: {fuzz_ratio}")
                     print(f"idx: {max_idx} max:{max(ratios)}\n"
                           f"input_album:   {target_album}\n"
                           f"closest_album: {albums[max_idx]['name']}\n"

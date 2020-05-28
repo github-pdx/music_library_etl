@@ -16,7 +16,8 @@ CREATE_ARTIST_QUERY = (f"CREATE TABLE IF NOT EXISTS {ARTIST} "
                        f"composer VARCHAR(150) NULL, "
                        f"conductor VARCHAR(150) NULL);")
 
-ALBUM_HEADERS = ['album_id', 'artist_id', 'album_title', 'year', 'album_gain', 'album_art']
+ALBUM_HEADERS = ['album_id', 'artist_id', 'album_title', 'year',
+                 'album_gain', 'album_art']
 CREATE_ALBUM_QUERY = (f"CREATE TABLE IF NOT EXISTS {ALBUM} "
                       f"(id SERIAL PRIMARY KEY, "
                       f"album_id VARCHAR(150) NULL, "
@@ -26,8 +27,9 @@ CREATE_ALBUM_QUERY = (f"CREATE TABLE IF NOT EXISTS {ALBUM} "
                       f"album_gain NUMERIC(5,2), "
                       f"album_art VARCHAR(48) NULL);")
 
-TRACK_HEADERS = ['track_id', 'album_title', 'track_title', 'track_number', 'track_length',
-                 'artist_id', 'rating', 'comment', 'track_gain']
+TRACK_HEADERS = ['track_id', 'album_title', 'track_title', 'track_number',
+                 'track_length', 'artist_id', 'rating', 'comment',
+                 'track_gain']
 CREATE_TRACK_QUERY = (f"CREATE TABLE IF NOT EXISTS {TRACK} "
                       f"(id SERIAL PRIMARY KEY, "
                       f"track_id VARCHAR(150) NULL, "
@@ -76,12 +78,13 @@ ARTIST_INSERT = (f"INSERT INTO {ARTIST} "
                  "VALUES (%s, %s, %s, %s);")
 
 ALBUM_INSERT = (f"INSERT INTO {ALBUM} "
-                "(album_id, artist_id, album_title, year, album_gain, album_art) "
+                "(album_id, artist_id, album_title, year, "
+                "album_gain, album_art) "
                 "VALUES (%s, %s, %s, %s, %s, %s);")
 
 TRACK_INSERT = (f"INSERT INTO {TRACK} "
-                "(track_id, album_title, track_title, track_number, track_length, "
-                "artist_id, rating, comment, track_gain) "
+                "(track_id, album_title, track_title, track_number, "
+                "track_length, artist_id, rating, comment, track_gain) "
                 "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s);")
 
 GENRE_INSERT = (f"INSERT INTO {GENRE} "
