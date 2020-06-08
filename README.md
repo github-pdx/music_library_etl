@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/github-pdx/music_library_etl.svg?branch=master)](https://travis-ci.org/github-pdx/music_library_etl)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
-## Python v3.7 script to ETL media tags:
+## Python v3.8 script to ETL media tags:
 Extract '.mp3', '.mp4', '.flac', and '.wma' tag data from JSON to Postgres
 
 * __Extract:__ read from JSON (flat file database)
@@ -20,10 +20,10 @@ Extract '.mp3', '.mp4', '.flac', and '.wma' tag data from JSON to Postgres
 * [JSON](https://github.com/github-pdx/media_etl/blob/master/data/input/media_lib.json)
 
 ## Tested On:
-* Ubuntu 16.04 LTS (Xenial Xerus)
 * Ubuntu 18.04 LTS (Bionic Beaver)
+* Ubuntu 20.04 LTS (Focal Fossa)
 * CentOS 8 (RHEL)
-* Windows 10 version 1909
+* Windows 10 version 2004
 
 
 ## Optional:

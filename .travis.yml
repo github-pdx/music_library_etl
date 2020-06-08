@@ -1,6 +1,7 @@
 language: python
 python:
   - "3.7"
+  - "3.8"
 install:
   - pip install -r requirements.txt
   - pip install codecov
@@ -9,9 +10,9 @@ env:
   - export PYTHONPATH=$PYTHONPATH:$(pwd)
   - export PYTHONPATH=$PYTHONPATH:$(pwd/media_etl)
 before_script:
-  - psql -c "CREATE DATABASE media_db;" -U postgres
-  - psql -c "CREATE USER run_admin_run WITH PASSWORD 'run_pass_run';" -U postgres
-  - sudo psql -c "ALTER ROLE run_admin_run SUPERUSER;" -U postgres
+  - sudo psql -c "CREATE ROLE run_admin_run WITH SUPERUSER CREATEDB LOGIN ENCRYPTED PASSWORD 'run_pass_run';" -U postgres
+  - psql -c "CREATE DATABASE media_db WITH ENCODING='UTF8' OWNER=run_admin_run CONNECTION LIMIT=24;" -U postgres
+  - psql -c "GRANT ALL PRIVILEGES ON DATABASE media_db to run_admin_run;" -U postgres
 services:
   - postgresql
 script:
