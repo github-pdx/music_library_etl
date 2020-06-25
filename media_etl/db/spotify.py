@@ -9,7 +9,7 @@ import spotipy
 from rapidfuzz import fuzz
 from spotipy.oauth2 import SpotifyClientCredentials
 
-BASE_DIR, SCRIPT_NAME = os.path.split(os.path.abspath(__file__))
+BASE_DIR, MODULE_NAME = os.path.split(os.path.abspath(__file__))
 TWO_PARENT_PATH = os.sep.join(pathlib.Path(BASE_DIR).parts[:-2])
 DEGUB = False
 

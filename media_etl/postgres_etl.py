@@ -7,7 +7,7 @@ from db import cmd_args
 from db import postgres_api
 from db import postgres_select_queries as sql
 
-BASE_DIR, SCRIPT_NAME = os.path.split(os.path.abspath(__file__))
+BASE_DIR, MODULE_NAME = os.path.split(os.path.abspath(__file__))
 PARENT_PATH, CURR_DIR = os.path.split(BASE_DIR)
 TWO_PARENT_PATH = os.sep.join(pathlib.Path(BASE_DIR).parts[:-2])
 DEMO_ENABLED = True
@@ -16,7 +16,7 @@ PRIVATE_CONFIG = False
 
 def main():
     """Driver to generate Postgres database records from JSON source file."""
-    print(f"{SCRIPT_NAME} starting...")
+    print(f"{MODULE_NAME} starting...")
     start = time.perf_counter()
     args = cmd_args.get_cmd_args(port_num=5432)
     server = args.server
@@ -47,7 +47,7 @@ def main():
             pg_api.query(query=sql.AVG_SIZE_SELECT)
         pg_api.close()
     end = time.perf_counter() - start
-    print(f"\n{SCRIPT_NAME} finished in {end:0.2f} seconds")
+    print(f"\n{MODULE_NAME} finished in {end:0.2f} seconds")
 
 
 if __name__ == "__main__":

@@ -11,7 +11,7 @@ from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from db.spotify import SpotifyClient
 from db import postgres_insert_queries as sql
 
-BASE_DIR, SCRIPT_NAME = os.path.split(os.path.abspath(__file__))
+BASE_DIR, MODULE_NAME = os.path.split(os.path.abspath(__file__))
 PARENT_PATH, CURR_DIR = os.path.split(BASE_DIR)
 TWO_PARENT_PATH = os.sep.join(pathlib.Path(BASE_DIR).parts[:-2])
 
